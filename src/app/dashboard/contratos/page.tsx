@@ -225,6 +225,11 @@ export default function ContratosPage() {
     );
   };
 
+  // Função para lidar com a mudança no campo de busca
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
   return (
     <div className="p-6 bg-background min-h-screen">
       {/* Header with back button */}
@@ -260,7 +265,7 @@ export default function ContratosPage() {
             placeholder="Buscar contratos..."
             className="pl-10 pr-4 py-2 w-full rounded-md border border-input bg-background"
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={handleSearchChange}
           />
         </div>
         <div className="flex flex-wrap gap-2">
@@ -427,6 +432,7 @@ export default function ContratosPage() {
                 onClick={() => {
                   setSearchQuery("");
                   setStatusFilter("todos");
+                  setDateFilter(null);
                 }}
               >
                 Limpar filtros
@@ -535,6 +541,7 @@ export default function ContratosPage() {
                         onClick={() => {
                           setSearchQuery("");
                           setStatusFilter("todos");
+                          setDateFilter(null);
                         }}
                       >
                         Limpar filtros
@@ -642,6 +649,13 @@ export default function ContratosPage() {
                   <div
                     key={index}
                     className="flex items-center p-3 rounded-md border border-input hover:bg-accent hover:text-accent-foreground cursor-pointer"
+                    onClick={() => {
+                      setContractName(template);
+                      setContractDescription(
+                        `Modelo padrão para ${template.toLowerCase()}`,
+                      );
+                      setManualContractStep("fields");
+                    }}
                   >
                     <FileText className="h-5 w-5 mr-3 text-primary" />
                     <span>{template}</span>
@@ -665,7 +679,26 @@ export default function ContratosPage() {
                 <p className="text-xs text-muted-foreground mb-4">
                   Suporte para arquivos PDF, DOCX e TXT
                 </p>
-                <Button size="sm">Selecionar arquivo</Button>
+                <label htmlFor="file-upload" className="cursor-pointer">
+                  <Button size="sm" as="span">
+                    Selecionar arquivo
+                  </Button>
+                  <input
+                    id="file-upload"
+                    type="file"
+                    className="hidden"
+                    accept=".pdf,.docx,.txt"
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        // Aqui seria a lógica para processar o arquivo
+                        // Por enquanto, vamos apenas mostrar o nome do arquivo
+                        alert(
+                          `Arquivo selecionado: ${e.target.files[0].name}\nFuncionalidade de processamento será implementada em breve.`,
+                        );
+                      }
+                    }}
+                  />
+                </label>
               </div>
             </div>
           ) : createMode === "manual" ? (
@@ -710,9 +743,31 @@ export default function ContratosPage() {
                 Cancelar
               </Button>
             )}
-            {createMode && createMode !== "manual" && (
-              <Button type="submit">Continuar</Button>
-            )}
+            {createMode &&
+              createMode !== "manual" &&
+              manualContractStep === null && (
+                <Button
+                  onClick={() => {
+                    if (createMode === "template") {
+                      // Aqui seria a lógica para selecionar um template
+                      // Por enquanto, vamos apenas simular a seleção do primeiro template
+                      setContractName("Contrato de Prestação de Serviços");
+                      setContractDescription(
+                        "Modelo padrão para prestação de serviços",
+                      );
+                      setManualContractStep("fields");
+                    } else if (createMode === "document") {
+                      // Aqui seria a lógica para processar o documento
+                      // Por enquanto, vamos apenas simular o processamento
+                      alert(
+                        "Funcionalidade de upload de documento será implementada em breve.",
+                      );
+                    }
+                  }}
+                >
+                  Continuar
+                </Button>
+              )}
           </DialogFooter>
         </DialogContent>
       </Dialog>
